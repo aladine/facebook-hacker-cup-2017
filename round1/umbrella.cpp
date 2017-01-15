@@ -3,32 +3,42 @@
 #include <math.h>
 
 #define ll long long
+#define MAX_MEMO 2000
 
 using namespace std;
 
-ll memo[300];
+ll memo[MAX_MEMO];
 
 void preprocess(){
     memo[0]=1;
-    for(int j = 1; j < 300; j++){
+    for(int j = 1; j < MAX_MEMO; j++){
         memo[j] = memo[j-1]*j;
     }
 }
 
 
 ll getCombinator(ll balls, ll box){
-    return memo[balls+box-1]/ (memo[box-1]* memo[balls]);
+    ll b = box-1;
+
+    if (balls > b ) {
+        int tmp = balls;
+        balls = b; 
+        b = tmp;
+    }
+
+    ll rel = 1;
+    for(int j = b+1; j <= b+balls; j++){
+        rel*= j;
+    }
+
+    return rel/memo[balls];
 }
 
 ll solve(int r[], int n, int m){
-//     2 5
-// r1
-// r2
+if (n ==1) return m;
     ll ways = 0;
     // implementation
     if(n>m) return 0;
-    // sort(r, r+n);
-    // reverse(r, r+n);
     
     int sum = 0;
     int v[n];// 0..n
@@ -36,8 +46,6 @@ ll solve(int r[], int n, int m){
         v[j] = j;
         sum += r[j];
     }
-    // early prune 
-    // if (2*sum -r[0]-r[1] > m-1) return 0;
 
 
 
@@ -49,7 +57,6 @@ ll solve(int r[], int n, int m){
         // }
         // cout << endl;
         ll diff = m-1-(2*sum -r[v[0]]-r[v[n-1]]);
-        cout << "diff: "<< diff << endl;
         if(diff < 0){
             continue;
         }
@@ -67,7 +74,7 @@ ll solve(int r[], int n, int m){
 
 
             result *= (j+1);
-            cout << "result" << result << endl;
+          //  cout << "diff: "<< diff << " j:" << j << " result:" << result << endl;
             ways += result;
         }
 
